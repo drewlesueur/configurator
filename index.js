@@ -2,7 +2,7 @@
   var colorIndex, colors, configs, getNextColor, makeBall, makeUI, parseConfigs, zIndex,
     __slice = Array.prototype.slice;
 
-  configs = "model\n  jetta\n    color\n      silver\n      white\n    trim\n      black\n        leather\n        nonLeather\n      tan\n    comment\n    engine\n      1.8T\n      2.0\n      VR6\n  passat\n    color\n      maroon\n      beige\n    trim\n    engine\n      1.8T\n      2.0T\n        super turbo\n        pretty turbo\n  beetle";
+  configs = "model\n  eos\n  gti\n    option 1\n    option 2\n    option 3\n    option 4\n    option 5\n  phaeton\n  routan\n  tiguan\n  taureg\n  jetta\n    color\n      silver\n      white\n    trim\n      black\n        leather\n        nonLeather\n      tan\n    comment\n    engine\n      1.8T\n      2.0\n      VR6\n  passat\n    color\n      maroon\n      beige\n    trim\n    engine\n      1.8T\n      2.0T\n        super turbo\n        pretty turbo\n  beetle";
 
   parseConfigs = function(configs) {
     var a, b, config, currentObj, currentSpaceLen, final, i, lastIndex, lastThingAdded, match, newCurrentObj, objectStack, ret, spaceLen, text, _i, _len, _ref;
@@ -88,15 +88,15 @@
     ball.style.top = "0";
     ball.style.left = "0";
     ball.style.display = "inline-block";
-    ball.style.width = "30px";
-    ball.style.height = "30px";
-    ball.style.borderRadius = "30px";
+    ball.style.width = "40px";
+    ball.style.height = "40px";
+    ball.style.borderRadius = "40px";
     ball.style.backgroundColor = getNextColor();
     ball.style.webkitTransition = "all .25s linear";
     style = getComputedStyle(el);
     w = parseInt(style.width);
     h = parseInt(style.height);
-    ball.centerTransform = "translate(" + (w / 2 - 15) + "px, " + (h / 2 - 15) + "px)";
+    ball.centerTransform = "translate(" + (w / 2 - 20) + "px, " + (h / 2 - 20) + "px)";
     ball.style.webkitTransform = ball.centerTransform;
     ball.options = [];
     ball.onclick = function(e) {
@@ -106,6 +106,7 @@
         _fn = function(oldOption) {
           if (oldOption !== ball) {
             oldOption.style.opacity = 0;
+            oldOption.style.webkitTransform = "" + oldOption.centerTransform;
             return setTimeout(function() {
               oldOption.style.display = "none";
               return console.log("hiding " + ball.innerHTML);
@@ -124,34 +125,42 @@
       ball.style.webkitTransform = "" + ball.centerTransform;
       ball.oldonclick = ball.onclick;
       ball.onclick = function() {
-        var oldOption, option, _fn2, _j, _k, _len2, _len3, _ref2, _ref3;
+        var oldOption, option, _fn2, _j, _k, _len2, _len3, _ref2, _ref3, _results;
         ball.onclick = ball.oldonclick;
         ball.style.webkitTransform = "" + ball.centerTransform + " " + ball.rotateTransform + " " + ball.radiusTransform;
-        _ref2 = ball.options;
-        _fn2 = function(option) {
-          option.style.webkitTransition = "all 0.25s linear";
-          option.style.opacity = 0;
-          setTimeout(function() {
-            return option.style.display = "none";
-          }, 250);
-          return option.style.webkitTransform = "" + ball.centerTransform;
-        };
-        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          option = _ref2[_j];
-          _fn2(option);
-        }
         if (oldBall) {
-          _ref3 = oldBall.options;
-          for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-            oldOption = _ref3[_k];
+          _ref2 = oldBall.options;
+          _fn2 = function(oldOption) {
             if (oldOption !== ball) {
               oldOption.style.opacity = 1;
               oldOption.style.display = "inline-block";
+              oldOption.style.webkitTransition = "all 0.25s linear";
+              return setTimeout(function() {
+                return oldOption.style.webkitTransform = "" + oldOption.centerTransform + " " + oldOption.rotateTransform + " " + oldOption.radiusTransform;
+              }, 0);
             }
+          };
+          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+            oldOption = _ref2[_j];
+            _fn2(oldOption);
           }
           oldBall.style.opacity = 1;
-          return oldBall.style.display = "inline-block";
+          oldBall.style.display = "inline-block";
         }
+        _ref3 = ball.options;
+        _results = [];
+        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+          option = _ref3[_k];
+          _results.push((function(option) {
+            option.style.webkitTransition = "all 0.25s linear";
+            option.style.opacity = 0;
+            setTimeout(function() {
+              return option.style.display = "none";
+            }, 250);
+            return option.style.webkitTransform = "" + ball.centerTransform;
+          })(option));
+        }
+        return _results;
       };
       len = options.length;
       deg = 360 / len;

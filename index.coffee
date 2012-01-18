@@ -1,5 +1,16 @@
 configs = """
   model
+    eos
+    gti
+      option 1
+      option 2
+      option 3
+      option 4
+      option 5
+    phaeton
+    routan
+    tiguan
+    taureg
     jetta
       color
         silver
@@ -104,15 +115,15 @@ makeBall = (configs, el, oldBall)->
   ball.style.top = "0"
   ball.style.left = "0"
   ball.style.display = "inline-block"
-  ball.style.width = "30px"
-  ball.style.height = "30px"
-  ball.style.borderRadius = "30px"
+  ball.style.width = "40px"
+  ball.style.height = "40px"
+  ball.style.borderRadius = "40px"
   ball.style.backgroundColor = getNextColor()
   ball.style.webkitTransition = "all .25s linear"
   style = getComputedStyle(el)
   w = parseInt(style.width)
   h = parseInt(style.height)
-  ball.centerTransform = "translate(#{w/2 - 15}px, #{h/2 - 15}px)"
+  ball.centerTransform = "translate(#{w/2 - 20}px, #{h/2 - 20}px)"
   ball.style.webkitTransform = ball.centerTransform 
     
   ball.options = []   
@@ -123,6 +134,9 @@ makeBall = (configs, el, oldBall)->
         do (oldOption) ->
           if oldOption != ball
             oldOption.style.opacity = 0
+            oldOption.style.webkitTransform = """
+              #{oldOption.centerTransform}
+            """
             setTimeout ->
               oldOption.style.display = "none"
               console.log "hiding #{ball.innerHTML}"
@@ -144,6 +158,23 @@ makeBall = (configs, el, oldBall)->
         #{ball.centerTransform} #{ball.rotateTransform} #{ball.radiusTransform}
       """
 
+       
+      #unhide old balls
+      if oldBall
+        for oldOption in oldBall.options
+          do (oldOption)->
+            if oldOption != ball
+              oldOption.style.opacity = 1
+              oldOption.style.display = "inline-block"
+              oldOption.style.webkitTransition = "all 0.25s linear"
+              setTimeout ->
+                oldOption.style.webkitTransform = """
+                  #{oldOption.centerTransform} #{oldOption.rotateTransform} #{oldOption.radiusTransform}
+                """
+              ,0
+        oldBall.style.opacity = 1
+        oldBall.style.display = "inline-block"
+      
       #delete this level
       for option in ball.options
         do (option) ->
@@ -155,16 +186,6 @@ makeBall = (configs, el, oldBall)->
           option.style.webkitTransform = """
             #{ball.centerTransform}
           """
-       
-      #unhide old balls
-      if oldBall
-        for oldOption in oldBall.options
-          if oldOption != ball
-            oldOption.style.opacity = 1
-            oldOption.style.display = "inline-block"
-        oldBall.style.opacity = 1
-        oldBall.style.display = "inline-block"
-      
 
     len = options.length
     deg = 360 / len
