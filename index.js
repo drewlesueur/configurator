@@ -106,7 +106,7 @@
         _fn = function(oldOption) {
           if (oldOption !== ball) {
             oldOption.style.opacity = 0;
-            oldOption.style.webkitTransform = "" + oldOption.centerTransform;
+            oldOption.style.webkitTransform = "" + oldOption.centerTransform + " " + oldOption.rotateTransform + " translate(200px, 0)";
             return setTimeout(function() {
               oldOption.style.display = "none";
               return console.log("hiding " + ball.innerHTML);

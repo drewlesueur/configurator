@@ -135,7 +135,7 @@ makeBall = (configs, el, oldBall)->
           if oldOption != ball
             oldOption.style.opacity = 0
             oldOption.style.webkitTransform = """
-              #{oldOption.centerTransform}
+              #{oldOption.centerTransform} #{oldOption.rotateTransform} translate(200px, 0)
             """
             setTimeout ->
               oldOption.style.display = "none"
