@@ -1,0 +1,64 @@
+configurations = """
+  car
+    model
+      jetta
+        color
+          silver
+          white
+        trim
+          black
+            leather
+            nonLeather
+          tan
+        comment
+        engine
+          1.8T
+          2.0
+          VR6
+      passat
+        color
+          maroon
+          beige
+        trim
+        engine
+          1.8T
+          2.0T
+            super turbo
+            pretty turbo
+      beetle
+"""
+
+parseConfigs = (configs) ->
+  configs = configs.split "\n"
+  final = {}
+  currentSpaceLen = -1
+  currentObj = []
+  lastThingAdded = null
+  lastIndex = 0
+  objectStack = []
+  for config in configs
+    match = config.match /^(\s*)([^\s]+)/ 
+    spaceLen = match[1].length / 2
+    text = match[2]
+    if spaceLen is currentSpaceLen
+      currentObj.push text
+      lastThingAdded = text
+      lastIndex = currentObj.length - 1
+    else if spaceLen > currentSpaceLen
+      currentSpaceLen = spaceLen
+      newCurrentObj = [lastThingAdded]
+      currentObj[lastIndex] = newCurrentObj
+      currentObj = newCurrentObj
+      currentObj.push text
+    else if spaceLen < currentSpaceLen
+      for var i in [0...currentSpaceLen - spaceLen]
+        
+      currentSpaceLen = spaceLen
+
+
+
+
+    
+    
+    
+  
