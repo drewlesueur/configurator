@@ -1,9 +1,48 @@
 <!doctype html>
 <html>
 <head>
+  <style>
+   #box {
+     width: 500px;
+     height: 500px;
+     border: 1px solid black;
+   }
+  </style>
 <script src="index.js"> </script>
 </head>
   <body>
+    <div id="box">
+    </div>
+<textarea id="configs" style="width: 500px; height: 500px;">
+model
+  jetta
+    color
+      silver
+      white
+    trim
+      black
+        leather
+        nonLeather
+      tan
+    comment
+    engine
+      1.8T
+      2.0
+      VR6
+  passat
+    color
+      maroon
+      beige
+    trim
+    engine
+      1.8T
+      2.0T
+        super turbo
+        pretty turbo
+  beetle
+</textarea>
+<br />
+<input type="button" onclick="makeUI(document.querySelector('#configs').value)" value="set ui">
   
   </body>
 </html>

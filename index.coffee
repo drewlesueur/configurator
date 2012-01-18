@@ -1,42 +1,30 @@
 configs = """
-  car
+  model
     jetta
+      color
+        silver
+        white
+      trim
+        black
+          leather
+          nonLeather
+        tan
+      comment
+      engine
+        1.8T
+        2.0
+        VR6
     passat
-      deeper for
-  boat
-    someting
-    someting
-
-"""
-
-configs = """
-  car
-    model
-      jetta
-        color
-          silver
-          white
-        trim
-          black
-            leather
-            nonLeather
-          tan
-        comment
-        engine
-          1.8T
-          2.0
-          VR6
-      passat
-        color
-          maroon
-          beige
-        trim
-        engine
-          1.8T
-          2.0T
-            super turbo
-            pretty turbo
-      beetle
+      color
+        maroon
+        beige
+      trim
+      engine
+        1.8T
+        2.0T
+          super turbo
+          pretty turbo
+    beetle
 """
 
 parseConfigs = (configs) ->
@@ -84,7 +72,141 @@ parseConfigs = (configs) ->
       lastIndex = currentObj.length - 1
   window.os = objectStack
   window.co = currentObj
-  return objectStack[0] || currentObj
+  ret =  objectStack[0] || currentObj
+  console.log ret
+  ret[0]
 
 
-console.log parseConfigs configs
+
+
+
+colorIndex = 0
+colors = ["#C70B4C", "#F07100", "#FFC40F", "#7ABF0B", "#7ABF0B"]
+getNextColor = () ->
+  color = colors[colorIndex]
+  colorIndex += 1
+  if colorIndex >= colors.length
+    colorIndex = 0
+  color
+  
+zIndex = 1000
+makeBall = (configs, el, oldBall)->
+  if Array.isArray(configs)
+    [first, options...] = configs
+  else
+    first = configs
+    options = []
+   
+  ball = document.createElement("div")
+  ball.style.zIndex = zIndex
+  zIndex -= 1
+  ball.style.position = "absolute"
+  ball.style.top = "0"
+  ball.style.left = "0"
+  ball.style.display = "inline-block"
+  ball.style.width = "30px"
+  ball.style.height = "30px"
+  ball.style.borderRadius = "30px"
+  ball.style.backgroundColor = getNextColor()
+  ball.style.webkitTransition = "all .25s linear"
+  style = getComputedStyle(el)
+  w = parseInt(style.width)
+  h = parseInt(style.height)
+  ball.centerTransform = "translate(#{w/2 - 15}px, #{h/2 - 15}px)"
+  ball.style.webkitTransform = ball.centerTransform 
+    
+  ball.options = []   
+  ball.onclick = (e) ->
+    #hide old balls
+    if oldBall
+      for oldOption in oldBall.options
+        do (oldOption) ->
+          if oldOption != ball
+            oldOption.style.opacity = 0
+            setTimeout ->
+              oldOption.style.display = "none"
+              console.log "hiding #{ball.innerHTML}"
+            , 250
+      oldBall.style.opacity = 0
+      setTimeout ->
+        oldBall.style.display = "none"
+      , 250
+
+    #move to center
+    ball.style.webkitTransform = """
+      #{ball.centerTransform}
+    """
+    ball.oldonclick = ball.onclick
+    ball.onclick = () -> #click again
+      ball.onclick = ball.oldonclick
+      #move ball back
+      ball.style.webkitTransform = """
+        #{ball.centerTransform} #{ball.rotateTransform} #{ball.radiusTransform}
+      """
+
+      #delete this level
+      for option in ball.options
+        do (option) ->
+          option.style.webkitTransition = "all 0.25s linear"
+          option.style.opacity = 0
+          setTimeout ->
+            option.style.display = "none"
+          , 250
+          option.style.webkitTransform = """
+            #{ball.centerTransform}
+          """
+       
+      #unhide old balls
+      if oldBall
+        for oldOption in oldBall.options
+          if oldOption != ball
+            oldOption.style.opacity = 1
+            oldOption.style.display = "inline-block"
+        oldBall.style.opacity = 1
+        oldBall.style.display = "inline-block"
+      
+
+    len = options.length
+    deg = 360 / len
+    moveOptionBall = (optionBall, index) ->
+      optionBall.style.opacity = 0
+      optionBall.style.display = "inline-block"
+      setTimeout ->
+        optionBall.style.opacity = 1
+        optionBall.style.display = "inline-block"
+        optionBall.rotateTransform = " rotate(#{index * deg}deg) " 
+        optionBall.radiusTransform = " translate(100px, 0) "
+        optionBall.style.webkitTransform = """
+          #{optionBall.centerTransform} #{optionBall.rotateTransform} #{optionBall.radiusTransform}
+        """
+      ,0
+
+    if ball.options.length is 0 
+      for option, index in options
+        optionBall = makeBall option, el, ball
+        moveOptionBall optionBall, index
+        ball.options.push optionBall
+    else
+      for optionBall, index in ball.options
+        moveOptionBall optionBall, index
+
+  
+  el.appendChild ball
+  text = document.createTextNode(first)
+  ball.appendChild text
+  ball
+
+makeUI = (configs, el) ->
+  el ||= document.querySelector("#box")
+  #remove all nodes
+  if (el.hasChildNodes())
+    while el.childNodes.length >= 1
+      el.removeChild(el.firstChild)
+  configs = parseConfigs configs
+  ball = makeBall configs, el
+window.makeUI = makeUI
+
+window.onload = ->
+  makeUI configs 
+
+
