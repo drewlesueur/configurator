@@ -176,22 +176,32 @@ makeBall = (configs, el, oldBall)->
         oldBall.style.display = "inline-block"
       
       #delete this level
+      ballFullTransform = """
+        #{ball.centerTransform} #{ball.rotateTransform} #{ball.radiusTransform}
+      """
       for option in ball.options
-        do (option) ->
+        do (option, ball) ->
           option.style.webkitTransition = "all 0.25s linear"
           option.style.opacity = 0
           setTimeout ->
             option.style.display = "none"
           , 250
-          option.style.webkitTransform = """
-            #{ball.centerTransform}
-          """
+          setTimeout ->
+            option.style.webkitTransform = ballFullTransform
+          , 0
+#TODO, who don't all rotate back
+          #option.style.webkitTransform = """
+          #  #{ball.centerTransform}
+          #"""
 
     len = options.length
     deg = 360 / len
     moveOptionBall = (optionBall, index) ->
       optionBall.style.opacity = 0
       optionBall.style.display = "inline-block"
+      optionBall.style.webkitTransform = """
+        #{ball.centerTransform} #{ball.rotateTransform} #{ball.radiusTransform}
+      """
       setTimeout ->
         optionBall.style.opacity = 1
         optionBall.style.display = "inline-block"

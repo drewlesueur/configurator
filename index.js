@@ -125,7 +125,7 @@
       ball.style.webkitTransform = "" + ball.centerTransform;
       ball.oldonclick = ball.onclick;
       ball.onclick = function() {
-        var oldOption, option, _fn2, _j, _k, _len2, _len3, _ref2, _ref3, _results;
+        var ballFullTransform, oldOption, option, _fn2, _j, _k, _len2, _len3, _ref2, _ref3, _results;
         ball.onclick = ball.oldonclick;
         ball.style.webkitTransform = "" + ball.centerTransform + " " + ball.rotateTransform + " " + ball.radiusTransform;
         if (oldBall) {
@@ -147,18 +147,21 @@
           oldBall.style.opacity = 1;
           oldBall.style.display = "inline-block";
         }
+        ballFullTransform = "" + ball.centerTransform + " " + ball.rotateTransform + " " + ball.radiusTransform;
         _ref3 = ball.options;
         _results = [];
         for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
           option = _ref3[_k];
-          _results.push((function(option) {
+          _results.push((function(option, ball) {
             option.style.webkitTransition = "all 0.25s linear";
             option.style.opacity = 0;
             setTimeout(function() {
               return option.style.display = "none";
             }, 250);
-            return option.style.webkitTransform = "" + ball.centerTransform;
-          })(option));
+            return setTimeout(function() {
+              return option.style.webkitTransform = ballFullTransform;
+            }, 0);
+          })(option, ball));
         }
         return _results;
       };
@@ -167,6 +170,7 @@
       moveOptionBall = function(optionBall, index) {
         optionBall.style.opacity = 0;
         optionBall.style.display = "inline-block";
+        optionBall.style.webkitTransform = "" + ball.centerTransform + " " + ball.rotateTransform + " " + ball.radiusTransform;
         return setTimeout(function() {
           optionBall.style.opacity = 1;
           optionBall.style.display = "inline-block";
